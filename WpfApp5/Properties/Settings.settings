@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WpfApp5.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Add" Type="System.String" Scope="User">
+      <Value Profile="(Default)">F1</Value>
+    </Setting>
+    <Setting Name="Delete" Type="System.String" Scope="User">
+      <Value Profile="(Default)">F2</Value>
+    </Setting>
+    <Setting Name="Directory_Plugins" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Plugins</Value>
+    </Setting>
+    <Setting Name="Search" Type="System.String" Scope="User">
+      <Value Profile="(Default)">F3</Value>
+    </Setting>
+    <Setting Name="Tab_Modifier" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Ctrl</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

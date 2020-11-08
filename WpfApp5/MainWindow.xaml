@@ -1,0 +1,408 @@
+﻿<Window x:Class="WpfApp5.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp5"
+        xmlns:properties="clr-namespace:WpfApp5.Properties"
+        mc:Ignorable="d"
+        Title="BookApp" Height="500" Width="800" 
+        >
+    
+    <Window.Resources>
+        <LinearGradientBrush x:Key="gradientStyle" StartPoint="0.7,1" EndPoint="0.7,0">
+            <GradientStop Color="Beige" Offset="0" />
+            <GradientStop Color="Snow" Offset="1" />
+        </LinearGradientBrush>
+        <Style TargetType="{x:Type Button}">
+            <Style.Setters>
+            <Setter Property="FontFamily" Value="Arial"/>
+            <Setter Property="Background" Value="{StaticResource gradientStyle}"/>
+            </Style.Setters>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Button.MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="FontSize" Duration="0:0:1" To="13" AutoReverse="True" RepeatBehavior="Forever" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+
+                <EventTrigger RoutedEvent="Button.MouseLeave">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="FontSize" To="12" Duration="0:0:0.1" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="{x:Type TabItem}">
+            <Setter Property="FontFamily" Value="Arial"/>
+            <Setter Property="Background" Value="{StaticResource gradientStyle}"/>
+        </Style>
+
+        <ControlTemplate TargetType="Button" x:Key="bettonTemplate">
+            <Border CornerRadius="10" BorderBrush="Black" BorderThickness="0.5"
+                    Background="Snow">
+                <ContentControl Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}" />
+
+            </Border>
+        </ControlTemplate>
+
+    </Window.Resources>
+    
+    
+    <Window.InputBindings>
+        <KeyBinding 
+            Key="{Binding Source={x:Static properties:Settings.Default}, Path=Add}"
+            Command="{Binding TabSelect}"
+            CommandParameter="{Binding ElementName=AddTabItem}"
+            Modifiers="{Binding Source={x:Static properties:Settings.Default}, Path=Tab_Modifier}"  />
+        <KeyBinding 
+            Key="{Binding Source={x:Static properties:Settings.Default}, Path=Delete}"
+            Command="{Binding TabSelect}"
+            CommandParameter="{Binding ElementName=TabDel}"
+            Modifiers="{Binding Source={x:Static properties:Settings.Default}, Path=Tab_Modifier}"/>
+        <KeyBinding 
+            Key="{Binding Source={x:Static properties:Settings.Default}, Path=Search}"
+            Command="{Binding TabSelect}"
+            CommandParameter="{Binding ElementName=TabSearch}"
+            Modifiers="{Binding Source={x:Static properties:Settings.Default}, Path=Tab_Modifier}"/>
+    </Window.InputBindings>
+    
+    
+    <Grid Background="Beige">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22"/>
+            <RowDefinition />
+            <RowDefinition Height="22"/>
+            <RowDefinition Height="300"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <Menu x:Name="FileMenu" Background="Beige">
+            <MenuItem Header="Файл" >
+                <MenuItem.Icon>
+                    <Image Name="fileIcon"/>
+                </MenuItem.Icon>
+                <MenuItem Header="Сохранить объект"  Click="Serealize_Book">
+                    <MenuItem.Icon>
+                        <Image Name="saveIcon"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
+
+                <MenuItem Header="Открыть объект" Click="Deserealize_Book"/>
+                <MenuItem Header="Сохранить как" Click="SaveAs">
+                </MenuItem>
+                <MenuItem Header="Сохранить проект" Click="SaveAll"/>
+                <MenuItem Header="Открыть проект" Click="OpenAll"/>
+                <MenuItem Header="Архивировать" Click="Zip_Compress"/>
+                <MenuItem Header="Открыть резервную копию" Click="Open_reserve_Copy"/>
+                <MenuItem Header="Переместить" Click="MenuItem_Click_2"/>
+                <MenuItem Header="Просмотр" Click="opn_overviw"/>
+
+
+            </MenuItem>
+            <MenuItem Header="LINQ">
+                <MenuItem Header="Сортировать по возрастанию" Click="Book_Sort_ascending">
+                    <MenuItem.Icon>
+                        <Image Name="ascending_image"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem Header="Сортировать по убыванию" Click="Book_Sort_descending">
+                    <MenuItem.Icon>
+                        <Image Name="descending_image"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                
+                <MenuItem Header="Вернуть список"  Click="Return_List"/>
+                <MenuItem Header="Группировать по дате" Click="Groupping"/>
+                <MenuItem Header="Агрегатные функции" Click="Agregate"/>
+                <MenuItem Header="Параллельная сортировка" Click="Parallel_Sort"/>
+            </MenuItem>
+            
+        </Menu>
+        <TextBlock Grid.Column="1" Text="Список книг" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Column="2" Text="Список авторов" HorizontalAlignment="Center"/>
+
+        <TabControl Grid.Row="1" Grid.RowSpan="4">
+            <TabItem Header="Добавить" Name="AddTabItem">
+                <ScrollViewer Grid.Row="1" Grid.RowSpan="4" >
+                    <StackPanel Background="Snow">
+                        <Expander Header="Добавить книгу">
+                            <StackPanel >
+                                <Label>Название</Label>
+                                <TextBox x:Name="NameText"/>
+                                <Label>Кол-во страниц</Label>
+                                <TextBox x:Name="NumberOfPagesText"  PreviewTextInput="Book_Pages_TextBox_PreviewTextInput">
+
+                                </TextBox>
+                                <Label>Дата Выхода</Label>
+                                <DatePicker x:Name="DatePicker1" SelectedDateChanged="Book_Date_Picker_Changed"/>
+                                <Label>ISBN</Label>
+                                <TextBox x:Name="ISBNText" PreviewTextInput="Book_Pages_TextBox_PreviewTextInput"/>
+                                <Label>Выбрать издательство</Label>
+                                <ComboBox x:Name="PubComboBox"/>
+                                <Button Width="150" Height="20" Click="Button_Click_AddImage">Добавить изображение</Button>
+                                <Button Width="150" Height="20" Click="Button_Click_Add" Template="{StaticResource bettonTemplate}">Добавить книгу</Button>
+                               
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="Добавить автора">
+                            <StackPanel>
+                                <Label>Имя автора</Label>
+                                <TextBox x:Name="NameAutText"/>
+                                <Label>День Рождения</Label>
+                                <DatePicker x:Name="DatePickerAut" SelectedDateChanged="Aut_Date_Picker_Changed"/>
+                                <Button Width="150" Height="20" Click="Button_Click_Add_Author">Добавить автора</Button>
+                                <TextBlock Background="Snow"/>
+                                <ComboBox x:Name="AuthorsComboBox" />
+                                <Button Width="150" Height="20" Click="Button_Click_Add_Exist_Author">Добавить существующего</Button>
+                            </StackPanel>
+                        </Expander>
+                        <Expander Header="Добавить издательство">
+                            <StackPanel>
+                                <Label>Название издательства</Label>
+                                <TextBox x:Name="TextPubName"/>
+                                <Label>Город издательства</Label>
+                                <TextBox x:Name="TextPubCity"/>
+                                <Button Height="20" Width="150" Click="Button_Click_Add_Publisher">Добавить</Button>
+                                
+
+                            </StackPanel>
+                            
+                        </Expander>
+                        <TextBlock/>
+                        <Path Fill="Beige" Stroke="Black">
+                            <Path.Data>
+                                <GeometryGroup>
+                                    <RectangleGeometry Rect = "10, 10 40, 50" />
+                                    
+                                    <LineGeometry StartPoint=" 44,10" EndPoint="44 60"/>
+                                    <LineGeometry StartPoint=" 46,10" EndPoint="46 60"/>
+                                    <LineGeometry StartPoint=" 48,10" EndPoint="48 60"/>
+
+                                </GeometryGroup>
+                            </Path.Data>
+                            <Path.RenderTransform>
+                                <TranslateTransform x:Name="transTransform2" X="0" Y="10"/>
+                            </Path.RenderTransform>
+                            <Path.Triggers>
+                                <EventTrigger RoutedEvent="Path.Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation From="0" To="50" Duration="00:00:5"
+                                                    Storyboard.TargetName="transTransform2"
+                                                    Storyboard.TargetProperty="X"
+                                                    AutoReverse="True" RepeatBehavior="Forever">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BounceEase Bounces="1" EasingMode="EaseOut"
+                                                        Bounciness="1" />
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Path.Triggers>
+                        </Path>
+
+                       
+
+                    </StackPanel>
+                    
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Удалить" x:Name="TabDel">
+                <StackPanel>
+                    <Button Width="150" Height="20" Click="Button_Click_Delete">Удалить книгу</Button>
+                    <Button Click="Button_Click_AutDelete" Grid.Row="4" Grid.ColumnSpan="2" Width="150" Height="20">Удалить автора</Button>
+                    <TextBlock Background="Snow"/>
+                    <ComboBox x:Name="PublDelete"/>
+                    <Button Width="150" Height="20" Click="Delete_Publisher">Удалить издательство</Button>
+                    <TextBlock Background="Snow"/>
+                </StackPanel>
+                
+                
+            </TabItem>
+            <TabItem Header="Поиск" x:Name="TabSearch">
+                <StackPanel>
+                    <TextBox x:Name="SearchItem" Height="20" Background="Snow"  />
+                    <DatePicker x:Name="SearchPicker" SelectedDateChanged="Book_Date_Picker_Changed"/>
+                    <Button Grid.Row="1" Click="Search" Height="20" Width="100">Поиск</Button>
+                </StackPanel>
+                
+            </TabItem>
+            <!--<TabItem Header="Управление">
+                <StackPanel>
+                    <ProgressBar Height="15" x:Name="progressBar"/>
+                    <TextBlock/>
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Button Height="20" Margin="0,0,5,0" Width="50" Click="Button_RunWorkerAsync" >Run</Button>
+                        <Button Height="20" Width="50" Click="Button_CancelAsync">Cancel</Button>
+                    </WrapPanel>
+                </StackPanel>
+            </TabItem>-->
+        </TabControl>
+
+        <ScrollViewer Grid.Column="1" Grid.Row="1">
+            <ListBox x:Name="BookList" Background="Snow">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="5" Orientation="Horizontal">
+                            <Image Width="100" Height="75" Source="{Binding Path=ImagePath}" />
+                            <TextBlock FontSize="14" Text="{Binding Path=Name}" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+            
+        <TabControl Grid.Row="3" Grid.Column="1">
+            <TabItem Header="Информация" Background="Snow">
+                <Grid Background="Snow" DataContext="{Binding ElementName=BookList, Path=SelectedItem}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="12" Text="Кол-во страниц:"   />
+                    <TextBlock FontSize="12" x:Name="Num" Text="{Binding NumberOfPages}" Grid.Column="2" />
+                    <TextBlock FontSize="12" Text="ISBN:" Grid.Row="1"/>
+                    <TextBlock FontSize="12" x:Name="isb" Text="{Binding ISBN}" Grid.Row="1" Grid.Column="2" />
+                    <TextBlock FontSize="12" Text="дата выхода" Grid.Row="2"/>
+                    <TextBlock FontSize="12" x:Name="rea" Text="{Binding releaseDate}" Grid.Row="2" Grid.Column="2"/>
+                    <TextBlock FontSize="12" Text="Издательство:" Grid.Row="3"/>
+                    <TextBlock FontSize="12" Text="{Binding Publish}" Grid.Row="3" Grid.Column="2"/>
+
+                    <!--<TextBlock FontSize="12" Text="Название" Grid.Row="4"/>
+                    <TextBlock FontSize="12" x:Name="nm" Text="{Binding Name}" Grid.Column="2" Grid.Row="4"/>-->
+
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Изменить">
+                <Grid Background="Snow" DataContext="{Binding ElementName=BookList, Path=SelectedItem}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="12" Text="Кол-во страниц:"   />
+                    <TextBox FontSize="12" Text="{Binding NumberOfPages, Mode=TwoWay}" Grid.Column="2" />
+                    <TextBlock FontSize="12" Text="ISBN:" Grid.Row="1"  PreviewTextInput="Book_Pages_TextBox_PreviewTextInput"/>
+                    <TextBox FontSize="12" Text="{Binding ISBN, Mode=TwoWay}"  Grid.Row="1" Grid.Column="2"  PreviewTextInput="Book_Pages_TextBox_PreviewTextInput" />
+                    <TextBlock FontSize="12" Text="дата выхода" Grid.Row="2"/>
+                    <DatePicker Text="{Binding releaseDate, Mode=TwoWay}" x:Name="DatePicker2" Grid.Row="2" Grid.Column="2" SelectedDateChanged="Bookcng_Date_Picker_Changed"/>
+                    <TextBlock FontSize="12" Text="Название:" Grid.Row="3"/>
+                    <TextBox FontSize="12" Text="{Binding Name, Mode=TwoWay}" Grid.Row="3" Grid.Column="2"/>
+
+                    <!--<TextBox DataContext="{Binding Publish}" Text="{Binding PubName,Mode=TwoWay}" Grid.Row="6" Grid.Column="2"/>-->
+                    <!--<Image Width="100" Height="100" Grid.Row="4"  Source="{Binding Path=ImagePath}" />
+                    <TextBox Grid.Row="4" Grid.Column="1" Height="30" x:Name="ImagePathText" Text="{Binding ImagePath, Mode=TwoWay}" VerticalAlignment="Top"/>-->
+
+                </Grid>
+            </TabItem>
+            
+        </TabControl>
+        <Grid Grid.Column="2" Grid.Row="1" DataContext="{Binding ElementName=BookList, Path=SelectedItem}"  >
+            <ScrollViewer >
+                <ListBox x:Name="AuthorList"  ItemsSource="{Binding Authors}" Background="Snow"  >
+                    <!--<ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock FontSize="16" Text="{Binding Path=AutName}" HorizontalAlignment="Center"/>
+                                <TextBlock FontSize="16" Text="{Binding Path=BirthDate}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>-->
+                </ListBox>
+            </ScrollViewer>
+        </Grid>
+        <Grid Background="Snow" Grid.Row="3" Grid.Column="2" DataContext="{Binding ElementName=AuthorList, Path=SelectedItem}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.ColumnSpan="2" Background="Beige"></TextBlock>
+            <TextBlock FontSize="12" Grid.Row="1" Text="Информация о авторе" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
+            <TextBlock FontSize="12" Grid.Row="2" Text="Имя автора"  DataContext="{Binding ElementName=AuthorList, Path=SelectedItem}"  />
+            <TextBox FontSize="12" Grid.Row="2" Text="{Binding AutName, Mode=TwoWay}" Grid.Column="2" />
+            <TextBlock FontSize="12" Text="Дата рождения" Grid.Row="3"/>
+            <DatePicker Text="{Binding BirthDate, Mode=TwoWay}" Grid.Row="3" Grid.Column="2"  x:Name="DatePicker3" SelectedDateChanged="Autcng_Date_Picker_Changed"/>
+            <ComboBox x:Name="PublChange" Grid.ColumnSpan="2" Grid.Row="5"/>
+            <TextBlock Text="Изменить издательство" Grid.ColumnSpan="2" Grid.Row="4" HorizontalAlignment="Center"/>
+            <TextBox DataContext="{Binding ElementName=PublChange, Path=SelectedItem}" Text="{Binding PubName,Mode=TwoWay}" Grid.Row="6" Grid.Column="2"/>
+            <TextBox DataContext="{Binding ElementName=PublChange, Path=SelectedItem}" Text="{Binding PubCity,Mode=TwoWay}" Grid.Row="7" Grid.Column="2"/>
+            <TextBlock FontSize="12" Grid.Row="6" Text="Название"  HorizontalAlignment="Left"/>
+            <TextBlock FontSize="12" Grid.Row="7" Text="Город"  HorizontalAlignment="Left"/>
+            <Ellipse Width="20" Height="20" Canvas.Bottom="0" Canvas.Left="120" Grid.Row="9" Grid.ColumnSpan="2">
+                <Ellipse.Fill>
+                    <RadialGradientBrush RadiusX="1" RadiusY="1" GradientOrigin="0.3, 0.3">
+                        <GradientStop Color="White" Offset="0" />
+                        <GradientStop Color="Black" Offset="1" />
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+                <Ellipse.Triggers>
+                    <EventTrigger RoutedEvent="Window.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimationUsingKeyFrames
+                                         Storyboard.TargetProperty="Fill.GradientStops[1].Color"
+                                         Duration="0:0:4" RepeatBehavior="Forever" AutoReverse="True">
+
+                                    <ColorAnimationUsingKeyFrames.KeyFrames>
+                                        <LinearColorKeyFrame KeyTime="0:0:1" Value="Green" />
+                                        <LinearColorKeyFrame KeyTime="0:0:2" Value="Red" />
+                                        <LinearColorKeyFrame KeyTime="0:0:3" Value="Blue" />
+
+                                    </ColorAnimationUsingKeyFrames.KeyFrames>
+                                </ColorAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Ellipse.Triggers>
+            </Ellipse>
+        </Grid>
+    </Grid>
+</Window>

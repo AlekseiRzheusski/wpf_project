@@ -1,0 +1,42 @@
+﻿<Page x:Class="WpfApp5.BookPage1"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp5"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="500"
+      Title="BookPage1">
+
+    <Grid Background="Beige">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Image Source="{Binding ImagePath}" Grid.RowSpan="4" Height="293" Width="205"/>
+        <TextBlock FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="1"  Text="Название"></TextBlock>
+        <TextBlock FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="1" Text="Дата выхода"></TextBlock>
+        <TextBlock FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Text="кол-во стр."></TextBlock>
+        <TextBlock FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="2" Grid.Row="1"  Text="{Binding releaseDate}"></TextBlock>
+        <TextBlock FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="2"  Text="{Binding Name}"></TextBlock>
+        <TextBlock FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="2" Grid.Row="2"  Text="{Binding NumberOfPages}"></TextBlock>
+        <ScrollViewer Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3">
+            <ListBox x:Name="AuthorList"  ItemsSource="{Binding Authors}" Background="Snow"  >
+             
+            </ListBox>
+        </ScrollViewer>
+        <!--<StackPanel Background="Beige">
+
+            <Image Source="{Binding ImagePath}" Height="293" Width="205"/>
+            <TextBlock FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Text="{Binding Name}"></TextBlock>
+        </StackPanel>-->
+    </Grid>
+</Page>

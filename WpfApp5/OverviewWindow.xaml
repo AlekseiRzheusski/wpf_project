@@ -1,0 +1,81 @@
+﻿<Window x:Class="WpfApp5.OverviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp5"
+        mc:Ignorable="d"
+        Title="OverviewWindow" Height="500" Width="800">
+        <Window.Resources>
+        <ControlTemplate TargetType="Button" x:Key="bettonTemplate">
+            <Border CornerRadius="25" BorderBrush="Black" BorderThickness="2"
+                    Background="Snow" Height="40" Width="90" >
+                <ContentControl Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}" />
+            </Border>
+        </ControlTemplate>
+
+    </Window.Resources>
+    
+    <StackPanel Orientation="Vertical" Background="Beige">
+        <Frame NavigationUIVisibility="Hidden" x:Name="filmsFrame" Content="Frame" Height="330"/>
+        <WrapPanel HorizontalAlignment="Center">
+            <Button  Content="Начало" x:Name="First" Margin="0,0,5,0" Height="40" Width="90" Click="First_Click" Template="{StaticResource bettonTemplate}">
+                
+            </Button>
+            <Button   Margin="0,0,5,0" x:Name="Previous" Height="40" Width="90" Click="Previous_Click" Template="{StaticResource bettonTemplate}">
+                Предыдущий
+            </Button>
+            <Button Margin="0,0,5,0" x:Name="Next" Height="40" Width="90" Click="Next_Click" Template="{StaticResource bettonTemplate}">
+                Следующий
+            </Button>
+            <Button x:Name="Last" Height="40" Width="90" Click="Last_Click" Template="{StaticResource bettonTemplate}">
+                Конец
+            </Button>
+        </WrapPanel>
+        <TextBlock
+                Canvas.Left="50"
+                Canvas.Top="50"
+                FontFamily="Comic Sans MS"
+                FontSize="20"
+                Text="Постраничный просмотр">
+            <TextBlock.RenderTransform>
+                <TransformGroup>
+                    <TranslateTransform X="0" Y="0" />
+                    <MatrixTransform x:Name="rectangleTransform3">
+                        <MatrixTransform.Matrix>
+                            <Matrix />
+                        </MatrixTransform.Matrix>
+                    </MatrixTransform>
+                </TransformGroup>
+            </TextBlock.RenderTransform>
+            <TextBlock.Triggers>
+                <EventTrigger RoutedEvent="Rectangle.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <MatrixAnimationUsingPath
+                                    RepeatBehavior="Forever"
+                                    Storyboard.TargetName="rectangleTransform3"
+                                    Storyboard.TargetProperty="Matrix"
+                                    Duration="00:00:05">
+                                <MatrixAnimationUsingPath.PathGeometry>
+                                    <PathGeometry>
+                                        <PathFigure IsClosed="True" StartPoint="0,0" >
+                                            <LineSegment Point="10,0" />
+                                            <LineSegment Point="540,0" />
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </MatrixAnimationUsingPath.PathGeometry>
+                            </MatrixAnimationUsingPath>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </TextBlock.Triggers>
+        </TextBlock>
+
+    </StackPanel>
+    
+
+</Window>
